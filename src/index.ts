@@ -1,14 +1,14 @@
-import { JWT } from './security/jwt';
-import { UserDTO } from './dto/response/user.dto';
-import { AuthenticationDTO } from './dto/response/authentication.dto';
 import "reflect-metadata";
 import * as express from "express";
+import { JWT } from './security/jwt';
 import { User } from "./entity/User";
 import { Database } from './database';
 import { createConnection } from "typeorm";
 import { Request, Response } from "express"; 
+import { UserDTO } from './dto/response/user.dto';
 import { PasswordHash } from './security/passwordHash';
 import { RegisterDTO } from './dto/request/register.dto';
+import { AuthenticationDTO } from './dto/response/authentication.dto';
 
 const app = express();
 
@@ -29,11 +29,10 @@ app.post("/register", async (req: Request, res: Response) => {
             throw new Error("Repeat password does not match!");
         }
         
-        // const existedEmail = await Database.userRepository.findOne({email: body.email});
-        // if(existedEmail) {
-        //     throw new Error("Email already exist");
-        // }
-
+        const existedEmail = await Database.userRepository.findOne({email: body.email});
+        if(existedEmail) {
+            throw new Error("Email already exist");
+        }
         const user = new User();
         user.username = username;
         user.email = email;
